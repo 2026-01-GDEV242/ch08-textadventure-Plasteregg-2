@@ -8,7 +8,8 @@ import java.util.HashMap;
  * It is used to recognise commands as they are typed in.
  *
  * @author  Michael Kölling and David J. Barnes
- * @version 2016.02.29
+ * @author Andrew Wright
+ * @version 2026.04.13
  */
 
 public class CommandWords

@@ -1,3 +1,4 @@
+import java.util.Stack;
 /**
  *  This class is the main class of the "World of Zuul" application. 
  *  "World of Zuul" is a very simple, text based adventure game.  Users 
@@ -12,14 +13,15 @@
  *  executes the commands that the parser returns.
  * 
  * @author  Michael Kölling and David J. Barnes
- * @version 2016.02.29
+ * @author Andrew Wright
+ * @version 2026.04.13
  */
 
 public class Game 
 {
     private Parser parser;
     private Room currentRoom;
-        
+    private Room previousRoom;    
     /**
      * Create the game and initialise its internal map.
      */
@@ -31,33 +33,68 @@ public class Game
 
     /**
      * Create all the rooms and link their exits together.
+     * Added Rooms Library,Cafeteria,dorm
      */
     private void createRooms()
     {
-        Room outside, theater, pub, lab, office;
-      
-        // create the rooms
-        outside = new Room("outside the main entrance of the university");
-        theater = new Room("in a lecture theater");
-        pub = new Room("in the campus pub");
-        lab = new Room("in a computing lab");
-        office = new Room("in the computing admin office");
-        
-        // initialise room exits
-        outside.setExit("east", theater);
-        outside.setExit("south", lab);
-        outside.setExit("west", pub);
+    Room outside, theater, pub, lab, office;
+    Room library, cafeteria, dorm; // new rooms
+  
+    // create the rooms
+    outside = new Room("outside the main entrance of the university");
+    theater = new Room("in a lecture theater");
+    pub = new Room("in the campus pub");
+    lab = new Room("in a computing lab");
+    office = new Room("in the computing admin office");
+    library = new Room("in the university library");
+    cafeteria = new Room("in the campus cafeteria");
+    dorm = new Room("in the student dormitory");
+    
+    // initialise room exits
+    outside.setExit("east", theater);
+    outside.setExit("south", lab);
+    outside.setExit("west", pub);
+    outside.setExit("north", library);
 
-        theater.setExit("west", outside);
+    theater.setExit("west", outside);
+    theater.setExit("south", cafeteria);
 
-        pub.setExit("east", outside);
+    pub.setExit("east", outside);
+    pub.setExit("north", dorm);
 
-        lab.setExit("north", outside);
-        lab.setExit("east", office);
+    lab.setExit("north", outside);
+    lab.setExit("east", office);
 
-        office.setExit("west", lab);
+    office.setExit("west", lab);
+    office.setExit("north", cafeteria);
 
-        currentRoom = outside;  // start game outside
+    library.setExit("south", outside);
+
+    cafeteria.setExit("north", theater);
+    cafeteria.setExit("south", office);
+
+    dorm.setExit("south", pub);
+    // Addition of Items to rooms
+    outside.setItem(new Item("a welcome sign", 1));
+
+    theater.setItem(new Item("a projector", 2));
+
+    pub.setItem(new Item("a pint of beer", 1));
+
+    lab.setItem(new Item("a laptop", 3));
+
+    office.setItem(new Item("a stack of papers", 2));
+
+    library.setItem(new Item("a dusty book", 2));
+
+    cafeteria.setItem(new Item("a sandwich", 1));
+
+    dorm.setItem(new Item("a backpack", 2));
+
+    // start game outside
+    currentRoom = outside;
+
+    currentRoom = outside;  // start game outside
     }
 
     /**
@@ -118,6 +155,9 @@ public class Game
             case QUIT:
                 wantToQuit = quit(command);
                 break;
+            case BACK:
+                goBack();
+                break;
         }
         return wantToQuit;
     }
@@ -159,9 +199,30 @@ public class Game
             System.out.println("There is no door!");
         }
         else {
-            currentRoom = nextRoom;
-            System.out.println(currentRoom.getLongDescription());
-        }
+        previousRoom = currentRoom;   // save where you are now
+        currentRoom = nextRoom;       // move to next room
+        System.out.println(currentRoom.getLongDescription());
+    }
+    }
+    /**
+    * Go back to the previous room.
+    * 
+    * If there is a previously visited room, the player returns to it.
+    * If there is no previous room (i.e., this is the first move),
+    * a message is printed indicating that going back is not possible.
+    */
+    private void goBack()
+    {
+    if(previousRoom == null) {
+        System.out.println("You can't go back!");
+        return;
+    }
+
+    Room temp = currentRoom;
+    currentRoom = previousRoom;
+    previousRoom = temp;
+
+    System.out.println(currentRoom.getLongDescription());
     }
 
     /** 
@@ -179,4 +240,4 @@ public class Game
             return true;  // signal that we want to quit
         }
     }
-}
+    }

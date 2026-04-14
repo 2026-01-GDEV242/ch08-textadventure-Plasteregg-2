@@ -1,7 +1,6 @@
 import java.util.Set;
 import java.util.HashMap;
 import java.util.Iterator;
-
 /**
  * Class Room - a room in an adventure game.
  *
@@ -13,13 +12,15 @@ import java.util.Iterator;
  * stores a reference to the neighboring room.
  * 
  * @author  Michael Kölling and David J. Barnes
- * @version 2016.02.29
+ * @author Andrew Wright
+ * @version 2026.04.13
  */
 
-public class Room 
-{
+   public class Room 
+   {
     private String description;
     private HashMap<String, Room> exits;        // stores exits of this room.
+    private Item item;
 
     /**
      * Create a room described "description". Initially, it has
@@ -32,7 +33,15 @@ public class Room
         this.description = description;
         exits = new HashMap<>();
     }
+    public void setItem(Item item)
+    {
+    this.item = item;
+    }
 
+    public Item getItem()
+    {
+    return item;
+    } 
     /**
      * Define an exit from this room.
      * @param direction The direction of the exit.
@@ -58,10 +67,16 @@ public class Room
      *     Exits: north west
      * @return A long description of this room
      */
-    public String getLongDescription()
+     public String getLongDescription()
     {
-        return "You are " + description + ".\n" + getExitString();
+    String description = "You are " + this.description + ".\n" + getExitString();
+
+    if(item != null) {
+        description += "\nYou see: " + item;
     }
+
+    return description;
+   }
 
     /**
      * Return a string describing the room's exits, for example
